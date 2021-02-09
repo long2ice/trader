@@ -18,7 +18,7 @@ type Api struct {
 
 func (api *Api) AccountInfo() ([]exchange.Balance, error) {
 	url := apiAddr + "/fapi/v2/binance?"
-	query := api.BuildCommonQuery(map[string]interface{}{})
+	query := api.BuildCommonQuery(map[string]interface{}{}, true)
 	var respError map[string]interface{}
 	var result []map[string]interface{}
 	_, err := api.RestyClient.R().SetResult(&result).SetError(&respError).Get(url + query)
@@ -44,19 +44,13 @@ func (api *Api) AccountInfo() ([]exchange.Balance, error) {
 		return balancesRet, nil
 	}
 }
-func (api *Api) CancelOrder(service *exchange.CancelOrderService) (map[string]interface{}, error) {
+func (api *Api) CancelOrder(params map[string]interface{}) (map[string]interface{}, error) {
 	return nil, nil
 }
-func (api *Api) KLines(service *exchange.KLineService) ([][]interface{}, error) {
+func (api *Api) KLines(params map[string]interface{}) ([][]interface{}, error) {
 	url := apiAddr + "/fapi/v1/klines"
-	var params map[string]interface{}
-	marshal, _ := json.Marshal(service)
-	err := json.Unmarshal(marshal, &params)
-	if err != nil {
-		log.WithField("err", err).WithField("marshal", marshal).Error("Unmarshal error")
-	}
 	var respError map[string]interface{}
-	query := api.BuildCommonQuery(params)
+	query := api.BuildCommonQuery(params, false)
 	resp, err := api.RestyClient.R().SetError(&respError).Post(url + query)
 	if err != nil {
 		log.WithField("err", err).Error("获取kline失败")
@@ -74,15 +68,9 @@ func (api *Api) KLines(service *exchange.KLineService) ([][]interface{}, error) 
 		return result, nil
 	}
 }
-func (api *Api) AddOrder(service *exchange.CreateOrderService) (map[string]interface{}, error) {
+func (api *Api) AddOrder(params map[string]interface{}) (map[string]interface{}, error) {
 	url := apiAddr + "/fapi/v1/order?"
-	var params map[string]interface{}
-	marshal, _ := json.Marshal(service)
-	err := json.Unmarshal(marshal, &params)
-	if err != nil {
-		log.WithField("err", err).WithField("marshal", marshal).Error("Unmarshal error")
-	}
-	query := api.BuildCommonQuery(params)
+	query := api.BuildCommonQuery(params, true)
 	var respError map[string]interface{}
 	resp, err := api.RestyClient.R().SetError(&respError).Post(url + query)
 	if err != nil {

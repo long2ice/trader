@@ -14,11 +14,12 @@ type ICreateOrderService interface {
 	SetSide(side db.Side) ICreateOrderService
 	SetType(type_ db.PriceType) ICreateOrderService
 	SetOthers(map[string]interface{}) ICreateOrderService
+	Collect() map[string]interface{}
 	Do() (map[string]interface{}, error)
 }
 
 type CreateOrderService struct {
-	Symbol           string          `json:"Symbol"`
+	Symbol           string          `json:"symbol"`
 	Side             db.Side         `json:"side"`
 	Type             db.PriceType    `json:"type"`
 	TimeInForce      string          `json:"timeInForce,omitempty"`
@@ -58,8 +59,11 @@ func (service *CreateOrderService) SetOthers(params map[string]interface{}) ICre
 	}
 	return service
 }
+func (service *CreateOrderService) Collect() map[string]interface{} {
+	return nil
+}
 func (service *CreateOrderService) Do() (map[string]interface{}, error) {
-	ret, err := service.Api.AddOrder(service)
+	ret, err := service.Api.AddOrder(service.Collect())
 	if err != nil {
 		return ret, err
 	}

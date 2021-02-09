@@ -68,18 +68,11 @@ func (exchange *BaseExchange) GetBalance(asset string) Balance {
 func (exchange *BaseExchange) GetBalances() []Balance {
 	return exchange.Balances
 }
-func (exchange *BaseExchange) NewKLineService() IKLineService {
-	var p IKLineService
-	p = &KLineService{
-		Api: exchange.Api,
-	}
-	return p
-}
 
 type IApi interface {
-	CancelOrder(service *CancelOrderService) (map[string]interface{}, error)
-	AddOrder(service *CreateOrderService) (map[string]interface{}, error)
-	KLines(services *KLineService) ([][]interface{}, error)
+	CancelOrder(params map[string]interface{}) (map[string]interface{}, error)
+	AddOrder(params map[string]interface{}) (map[string]interface{}, error)
+	KLines(params map[string]interface{}) ([][]interface{}, error)
 }
 
 type BaseApi struct {
@@ -90,18 +83,28 @@ type BaseApi struct {
 }
 
 // 构建必要参数
-func (api *BaseApi) BuildCommonQuery(params map[string]interface{}) string {
+func (api *BaseApi) BuildCommonQuery(params map[string]interface{}, withSign bool) string {
 	var joins []string
 	for key, value := range params {
-		joins = append(joins, fmt.Sprintf("%s=%s", key, value))
+		switch value.(type) {
+		case string:
+			joins = append(joins, fmt.Sprintf("%s=%s", key, value))
+		case int:
+			joins = append(joins, fmt.Sprintf("%s=%d", key, value))
+		}
 	}
-	timestamp := strconv.FormatInt(time.Now().UnixNano()/1e6, 10)
-	joins = append(joins, fmt.Sprintf("recvWindow=10000&timestamp=%s", timestamp))
+	if withSign {
+		timestamp := strconv.FormatInt(time.Now().UnixNano()/1e6, 10)
+		joins = append(joins, fmt.Sprintf("recvWindow=10000&timestamp=%s", timestamp))
+	}
 	query := strings.Join(joins, "&")
-	h := hmac.New(sha256.New, []byte(api.ApiSecret))
-	h.Write([]byte(query))
-	signature := hex.EncodeToString(h.Sum(nil))
-	query += "&signature=" + signature
+
+	if withSign {
+		h := hmac.New(sha256.New, []byte(api.ApiSecret))
+		h.Write([]byte(query))
+		signature := hex.EncodeToString(h.Sum(nil))
+		query += "&signature=" + signature
+	}
 	return query
 }
 func NewExchange(exchange Type, apiKey string, apiSecret string) (IExchange, error) {

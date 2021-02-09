@@ -9,6 +9,7 @@ type ICancelOrderService interface {
 	SetSymbol(symbol string) ICancelOrderService
 	SetOrderId(orderId string) ICancelOrderService
 	SetOthers(map[string]interface{}) ICancelOrderService
+	Collect() map[string]interface{}
 	Do() (map[string]interface{}, error)
 }
 type CancelOrderService struct {
@@ -34,8 +35,13 @@ func (service *CancelOrderService) SetOthers(params map[string]interface{}) ICan
 	}
 	return service
 }
+
+func (service *CancelOrderService) Collect() map[string]interface{} {
+	return nil
+}
+
 func (service *CancelOrderService) Do() (map[string]interface{}, error) {
-	ret, err := service.Api.CancelOrder(service)
+	ret, err := service.Api.CancelOrder(service.Collect())
 	if err != nil {
 		return ret, err
 	}

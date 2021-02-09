@@ -40,23 +40,31 @@ func (future *Future) SubscribeAccount(callback func(map[string]interface{})) er
 	panic("implement me")
 }
 func (future *Future) AddOrder(order db.Order) (map[string]interface{}, error) {
-	return future.Api.AddOrder(&exchange.CreateOrderService{
+	service := exchange.CreateOrderService{
 		Symbol: order.Symbol,
 		Side:   order.Side,
 		Type:   order.Type,
 		Price:  order.Price,
 		Api:    &future.Api,
-	})
+	}
+	return future.Api.AddOrder(service.Collect())
 }
 
 func (future *Future) CancelOrder(symbol string, orderId string) (map[string]interface{}, error) {
-	return future.Api.CancelOrder(&exchange.CancelOrderService{
+	service := exchange.CancelOrderService{
 		Symbol:  symbol,
 		OrderId: orderId,
 		Api:     &future.Api,
-	})
+	}
+	return future.Api.CancelOrder(service.Collect())
 }
-
+func (future *Future) NewKLineService() exchange.IKLineService {
+	var p exchange.IKLineService
+	p = &exchange.KLineService{
+		Api: &future.Api,
+	}
+	return p
+}
 func (future *Future) RefreshAccount() {
 	//初始化账号信息
 	balances, err := future.Api.AccountInfo()

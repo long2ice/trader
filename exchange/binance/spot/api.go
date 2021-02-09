@@ -31,15 +31,9 @@ func (api *Api) CreateSpotListenKey() (string, bool) {
 	}
 }
 
-func (api *Api) CancelOrder(service *exchange.CancelOrderService) (map[string]interface{}, error) {
+func (api *Api) CancelOrder(params map[string]interface{}) (map[string]interface{}, error) {
 	url := apiAddr + "/api/v3/order?"
-	var params map[string]interface{}
-	marshal, _ := json.Marshal(service)
-	err := json.Unmarshal(marshal, &params)
-	if err != nil {
-		log.WithField("err", err).WithField("marshal", marshal).Error("Unmarshal error")
-	}
-	query := api.BuildCommonQuery(params)
+	query := api.BuildCommonQuery(params, true)
 	var respError map[string]interface{}
 	resp, err := api.RestyClient.R().SetError(&respError).Delete(url + query)
 	if err != nil {
@@ -61,7 +55,7 @@ func (api *Api) CancelOrder(service *exchange.CancelOrderService) (map[string]in
 }
 func (api *Api) AccountInfo() ([]exchange.Balance, error) {
 	url := apiAddr + "/api/v3/account?"
-	query := api.BuildCommonQuery(map[string]interface{}{})
+	query := api.BuildCommonQuery(map[string]interface{}{}, true)
 	var respError map[string]interface{}
 	var result map[string]interface{}
 	_, err := api.RestyClient.R().SetResult(&result).SetError(&respError).Get(url + query)
@@ -89,16 +83,9 @@ func (api *Api) AccountInfo() ([]exchange.Balance, error) {
 		return balancesRet, nil
 	}
 }
-func (api *Api) AddOrder(service *exchange.CreateOrderService) (map[string]interface{}, error) {
+func (api *Api) AddOrder(params map[string]interface{}) (map[string]interface{}, error) {
 	url := apiAddr + "/api/v3/order?"
-
-	var params map[string]interface{}
-	marshal, _ := json.Marshal(service)
-	err := json.Unmarshal(marshal, &params)
-	if err != nil {
-		log.WithField("err", err).WithField("marshal", marshal).Error("Unmarshal error")
-	}
-	query := api.BuildCommonQuery(params)
+	query := api.BuildCommonQuery(params, true)
 	var respError map[string]interface{}
 	resp, err := api.RestyClient.R().SetError(&respError).Post(url + query)
 	if err != nil {
@@ -118,17 +105,11 @@ func (api *Api) AddOrder(service *exchange.CreateOrderService) (map[string]inter
 		return ret, nil
 	}
 }
-func (api *Api) KLines(service *exchange.KLineService) ([][]interface{}, error) {
-	url := apiAddr + "/api/v3/klines"
-	var params map[string]interface{}
-	marshal, _ := json.Marshal(service)
-	err := json.Unmarshal(marshal, &params)
-	if err != nil {
-		log.WithField("err", err).WithField("marshal", marshal).Error("Unmarshal error")
-	}
+func (api *Api) KLines(params map[string]interface{}) ([][]interface{}, error) {
 	var respError map[string]interface{}
-	query := api.BuildCommonQuery(params)
-	resp, err := api.RestyClient.R().SetError(&respError).Post(url + query)
+	query := api.BuildCommonQuery(params, false)
+	url := apiAddr + "/api/v3/klines?" + query
+	resp, err := api.RestyClient.R().SetError(&respError).Get(url)
 	if err != nil {
 		log.WithField("err", err).Error("获取kline失败")
 		return nil, err

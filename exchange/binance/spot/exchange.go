@@ -28,21 +28,23 @@ func init() {
 	exchange.RegisterExchange(exchange.BinanceSpot, &Spot{})
 }
 func (s *Spot) AddOrder(order db.Order) (map[string]interface{}, error) {
-	return s.Api.AddOrder(&exchange.CreateOrderService{
+	service := exchange.CreateOrderService{
 		Symbol: order.Symbol,
 		Side:   order.Side,
 		Type:   order.Type,
 		Price:  order.Price,
 		Api:    &s.Api,
-	})
+	}
+	return s.Api.AddOrder(service.Collect())
 }
 
 func (s *Spot) CancelOrder(symbol string, orderId string) (map[string]interface{}, error) {
-	return s.Api.CancelOrder(&exchange.CancelOrderService{
+	service := exchange.CancelOrderService{
 		Symbol:  symbol,
 		OrderId: orderId,
 		Api:     &s.Api,
-	})
+	}
+	return s.Api.CancelOrder(service.Collect())
 }
 func (s *Spot) NewExchange(apiKey string, apiSecret string) exchange.IExchange {
 	b := &Spot{
@@ -65,6 +67,13 @@ func (s *Spot) RefreshAccount() {
 	} else {
 		s.Balances = balances
 	}
+}
+func (s *Spot) NewKLineService() exchange.IKLineService {
+	var p exchange.IKLineService
+	p = &exchange.KLineService{
+		Api: &s.Api,
+	}
+	return p
 }
 
 //订阅账号更新

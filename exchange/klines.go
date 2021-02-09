@@ -12,6 +12,7 @@ type IKLineService interface {
 	SetStartTime(startTime int) IKLineService
 	SetEndTime(endTime int) IKLineService
 	SetLimit(limit int) IKLineService
+	Collect() map[string]interface{}
 	Do() ([]KLine, error)
 }
 type KLineService struct {
@@ -19,9 +20,9 @@ type KLineService struct {
 	Api       IApi
 	Symbol    string
 	Interval  string
-	StartTime int
-	EndTime   int
-	Limit     int
+	StartTime *int
+	EndTime   *int
+	Limit     *int
 }
 
 func (s *KLineService) SetSymbol(symbol string) IKLineService {
@@ -33,19 +34,34 @@ func (s *KLineService) SetInterval(interval string) IKLineService {
 	return s
 }
 func (s *KLineService) SetStartTime(startTime int) IKLineService {
-	s.StartTime = startTime
+	s.StartTime = &startTime
 	return s
 }
 func (s *KLineService) SetEndTime(endTime int) IKLineService {
-	s.EndTime = endTime
+	s.EndTime = &endTime
 	return s
 }
 func (s *KLineService) SetLimit(limit int) IKLineService {
-	s.Limit = limit
+	s.Limit = &limit
 	return s
 }
+func (s *KLineService) Collect() map[string]interface{} {
+	params := make(map[string]interface{})
+	params["symbol"] = s.Symbol
+	params["interval"] = s.Interval
+	if s.StartTime != nil {
+		params["startTime"] = *s.StartTime
+	}
+	if s.EndTime != nil {
+		params["endTime"] = *s.EndTime
+	}
+	if s.Limit != nil {
+		params["limit"] = *s.Limit
+	}
+	return params
+}
 func (s *KLineService) Do() ([]KLine, error) {
-	result, err := s.Api.KLines(s)
+	result, err := s.Api.KLines(s.Collect())
 	if err != nil {
 		log.WithField("err", err).Error("Get KLines error")
 		return nil, err

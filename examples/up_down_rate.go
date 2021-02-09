@@ -40,7 +40,7 @@ func (s *UpDownRate) OnConnect() {
 	ex := s.Exchange
 	//加载最近价格
 	s.priceWindow = newPriceWindow()
-	kLines, err := ex.NewKLineService().SetSymbol(s.GetSymbol()).SetLimit(s.KLineLimit).Do()
+	kLines, err := ex.NewKLineService().SetSymbol(s.GetSymbol()).SetInterval("1m").SetLimit(s.KLineLimit).Do()
 	if err != nil {
 		log.WithField("err", err).WithField("symbol", s.GetSymbol()).Fatal("Get latest kline error")
 	} else {
