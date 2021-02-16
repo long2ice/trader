@@ -11,7 +11,7 @@ type KLineService struct {
 
 func (service *KLineService) Do() ([]exchange.KLine, error) {
 	var kLines []db.KLine
-	db.Client.Where("symbol = ?", service.Symbol).Where("open_time >= ?", service.StartTime).Limit(*service.Limit).Order("open_time").Find(&kLines)
+	db.Client.Where("symbol = ?", service.Symbol).Limit(*service.Limit).Order("close_time").Find(&kLines)
 	var ret []exchange.KLine
 	for _, line := range kLines {
 		ret = append(ret, exchange.KLine{

@@ -3,13 +3,13 @@ package db
 type Side string
 
 const (
-	BUY  Side = "buy"
-	SELL Side = "sell"
+	BUY  Side = "BUY"
+	SELL Side = "SELL"
 )
 
 type PriceType string
 
 const (
-	Limit  PriceType = "LIMIT"
-	Market PriceType = "MARKET"
+	LIMIT  PriceType = "LIMIT"
+	MARKET PriceType = "MARKET"
 )

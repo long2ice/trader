@@ -23,7 +23,7 @@ func (mock *Mock) SubscribeMarketData(streams []string, callback func(map[string
 		symbols = append(symbols, strings.ToUpper(strings.Split(stream, "@")[0]))
 	}
 	var kLines []db.KLine
-	db.Client.Where("open_time BETWEEN ? AND ?", mock.StartTime, mock.EndTime).Order("open_time").Where("symbol IN ?", symbols).Find(&kLines)
+	db.Client.Where("close_time BETWEEN ? AND ?", mock.StartTime, mock.EndTime).Order("close_time").Where("symbol IN ?", symbols).Find(&kLines)
 	for _, kline := range kLines {
 		callback(map[string]interface{}{
 			"h": kline.High,

@@ -2,6 +2,7 @@ package spot
 
 import (
 	"github.com/long2ice/trader/conf"
+	"github.com/long2ice/trader/db"
 	"github.com/long2ice/trader/exchange"
 	"github.com/shopspring/decimal"
 	log "github.com/sirupsen/logrus"
@@ -31,6 +32,12 @@ func TestBinanceExchange_AddOrder(t *testing.T) {
 	if err != nil {
 		log.WithField("err", err).Fatal("创建交易所失败")
 	}
-	ret, err := ex.NewCreateOrderService().SetSymbol("BTCUSDT").SetSide("BUY").SetType("LIMIT").SetVol(decimal.NewFromFloat(0.001)).SetPrice(decimal.NewFromInt(20000)).SetOthers(map[string]interface{}{"TimeInForce": "GTC"}).Do()
+	ret, err := ex.AddOrder(db.Order{
+		Side:   "BUY",
+		Vol:    decimal.NewFromFloat(0.001),
+		Price:  decimal.NewFromInt(20000),
+		Symbol: "BTCUSDT",
+		Type:   "LIMIT",
+	})
 	log.WithField("account", ex.GetBalance("USDT")).WithField("ret", ret).Info()
 }

@@ -9,7 +9,7 @@ import (
 type Order struct {
 	ID          uint
 	OrderId     string
-	Side        Side `gorm:"type:enum('buy', 'sell');"`
+	Side        Side `gorm:"type:enum('BUY', 'SELL');"`
 	Vol         decimal.Decimal
 	Price       decimal.Decimal
 	Symbol      string
@@ -30,9 +30,9 @@ type Fund struct {
 //分钟K线
 type KLine struct {
 	ID        int64
-	Symbol    string
+	Symbol    string `gorm:"index:idx_symbol_time"`
 	OpenTime  time.Time
-	CloseTime time.Time
+	CloseTime time.Time `gorm:"index:idx_symbol_time"`
 	Open      decimal.Decimal
 	Close     decimal.Decimal
 	High      decimal.Decimal
