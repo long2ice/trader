@@ -36,5 +36,5 @@ func TestUpDownRate(t *testing.T) {
 			Exchange:   eng.Exchange,
 		}},
 	)
-	eng.Start()
+	eng.Start(false)
 }

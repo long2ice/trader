@@ -16,7 +16,6 @@ type IKLineService interface {
 	Do() ([]KLine, error)
 }
 type KLineService struct {
-	IKLineService
 	Api       IApi
 	Symbol    string
 	Interval  string

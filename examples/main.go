@@ -24,5 +24,5 @@ func main() {
 			Streams:    []string{"ethusdt@kline_1m", "ethusdt@miniTicker"},
 		}},
 	)
-	eng.Start()
+	eng.Start(true)
 }
