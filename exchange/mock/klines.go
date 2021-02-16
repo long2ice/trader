@@ -3,6 +3,7 @@ package mock
 import (
 	"github.com/long2ice/trader/db"
 	"github.com/long2ice/trader/exchange"
+	"time"
 )
 
 type KLineService struct {
@@ -11,7 +12,8 @@ type KLineService struct {
 
 func (service *KLineService) Do() ([]exchange.KLine, error) {
 	var kLines []db.KLine
-	db.Client.Where("symbol = ?", service.Symbol).Limit(*service.Limit).Order("close_time").Find(&kLines)
+	startTime := time.Unix(int64(*service.StartTime), 0)
+	db.Client.Where("symbol = ?", service.Symbol).Where("close_time > ?", startTime).Limit(*service.Limit).Order("close_time").Find(&kLines)
 	var ret []exchange.KLine
 	for _, line := range kLines {
 		ret = append(ret, exchange.KLine{

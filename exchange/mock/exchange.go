@@ -44,5 +44,6 @@ func (mock *Mock) NewExchange(apiKey string, apiSecret string) exchange.IExchang
 func (mock *Mock) NewKLineService() exchange.IKLineService {
 	var p exchange.IKLineService
 	p = &KLineService{}
+	p.SetStartTime(int(mock.StartTime.Unix()))
 	return p
 }
