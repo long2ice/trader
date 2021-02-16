@@ -8,7 +8,6 @@ import (
 	"github.com/long2ice/trader/strategy"
 	"github.com/long2ice/trader/utils"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
 	"strings"
@@ -19,9 +18,7 @@ type Engine struct {
 	engineBase
 }
 
-func (e *Engine) Start() {
-	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt, os.Kill)
+func (e *Engine) Start(block bool) {
 	db.Init()
 	e.SubscribeAccount()
 	for _, s := range e.strategies {
@@ -29,11 +26,15 @@ func (e *Engine) Start() {
 		s.OnConnect()
 		err := e.SubscribeMarketData(s)
 		if err != nil {
-			log.WithField("err", err).Fatal("Subscribe market data fail")
+			e.GetLogger().WithField("err", err).Fatal("Subscribe market data fail")
 		}
 	}
-	log.Info("Start trader success")
-	<-interrupt
+	e.GetLogger().Info("Start engine success")
+	if block {
+		interrupt := make(chan os.Signal, 1)
+		signal.Notify(interrupt, os.Interrupt, os.Kill)
+		<-interrupt
+	}
 }
 func (e *Engine) SubscribeMarketData(strategy strategy.IStrategy) error {
 	streams := strategy.GetStreams()
@@ -90,15 +91,15 @@ func (e *Engine) SubscribeMarketData(strategy strategy.IStrategy) error {
 		}
 	})
 	if err != nil {
-		log.WithField("err", err).WithField("streams", streams).Error("Failed to subscribe market data")
+		e.GetLogger().WithField("err", err).WithField("streams", streams).Error("Failed to subscribe market data")
 	} else {
-		log.WithField("streams", streams).Info("Subscribe market data success")
+		e.GetLogger().WithField("streams", streams).Info("Subscribe market data success")
 	}
 	return nil
 }
 func (e *Engine) SubscribeAccount() {
 	err := e.Exchange.SubscribeAccount(func(message map[string]interface{}) {
-		log.WithField("message", message).Info("Account data")
+		e.GetLogger().WithField("message", message).Info("Account data")
 		eventType, _ := message["e"].(string)
 		for _, s := range e.strategies {
 			switch eventType {
@@ -110,8 +111,8 @@ func (e *Engine) SubscribeAccount() {
 		}
 	})
 	if err != nil {
-		log.WithField("err", err).Error("Failed to subscribe account")
+		e.GetLogger().WithField("err", err).Error("Failed to subscribe account")
 	} else {
-		log.Info("Subscribe account success")
+		e.GetLogger().Info("Subscribe account success")
 	}
 }

@@ -8,10 +8,11 @@ import (
 )
 
 type IEngine interface {
-	Start()
+	Start(block bool)
 	RegisterStrategy(strategy strategy.IStrategy)
 	SubscribeMarketData(strategy strategy.IStrategy) error
 	SubscribeAccount()
+	GetLogger() *log.Entry
 }
 
 type engineBase struct {
@@ -23,11 +24,15 @@ type engineBase struct {
 	apiSecret    string
 }
 
+func (e *engineBase) GetLogger() *log.Entry {
+	return log.WithField("exchange", e.ExchangeType)
+}
+
 var engines = make(map[exchange.Type]*IEngine)
 
 func (e *engineBase) RegisterStrategy(s strategy.IStrategy) {
-	log.WithField("strategy", utils.GetTypeName(s)).Info("Register strategy success")
 	e.strategies = append(e.strategies, s)
+	e.GetLogger().WithField("strategy", utils.GetTypeName(s)).Info("Register strategy success")
 }
 
 func GetEngine(exchangeType exchange.Type, apiKey string, apiSecret string) *IEngine {
@@ -38,7 +43,7 @@ func GetEngine(exchangeType exchange.Type, apiKey string, apiSecret string) *IEn
 
 	ex, err := exchange.NewExchange(exchangeType, apiKey, apiSecret)
 	if err != nil {
-		log.WithField("err", err).Fatal("New exchange failed")
+		e.GetLogger().WithField("err", err).Fatal("New exchange failed")
 	}
 	eb := engineBase{Exchange: ex, ExchangeType: exchangeType, apiKey: apiKey, apiSecret: apiSecret}
 	if exchangeType == exchange.Mock {

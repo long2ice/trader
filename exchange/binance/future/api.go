@@ -53,7 +53,6 @@ func (api *Api) AccountInfo() ([]exchange.Balance, error) {
 				balancesRet = append(balancesRet, exchange.Balance{Asset: asset.(string), Free: free_, Locked: all_.Sub(free_)})
 			}
 		}
-		log.WithField("balances", balancesRet).Info("Get account balances success")
 		return balancesRet, nil
 	}
 }
@@ -61,10 +60,10 @@ func (api *Api) CancelOrder(params map[string]interface{}) (map[string]interface
 	panic("not implemented")
 }
 func (api *Api) KLines(params map[string]interface{}) ([][]interface{}, error) {
-	url := apiAddr + "/fapi/v1/klines"
+	url := apiAddr + "/fapi/v1/klines?"
 	var respError map[string]interface{}
 	query := api.BuildCommonQuery(params, false)
-	resp, err := api.RestyClient.R().SetError(&respError).Post(url + query)
+	resp, err := api.RestyClient.R().SetError(&respError).Get(url + query)
 	if err != nil {
 		log.WithField("err", err).Error("获取KLine失败")
 		return nil, err

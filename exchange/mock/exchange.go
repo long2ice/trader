@@ -41,3 +41,8 @@ func (mock *Mock) SubscribeMarketData(streams []string, callback func(map[string
 func (mock *Mock) NewExchange(apiKey string, apiSecret string) exchange.IExchange {
 	return &Mock{}
 }
+func (mock *Mock) NewKLineService() exchange.IKLineService {
+	var p exchange.IKLineService
+	p = &KLineService{}
+	return p
+}

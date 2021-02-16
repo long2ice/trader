@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"github.com/long2ice/trader/db"
 	"github.com/long2ice/trader/exchange"
+	"github.com/long2ice/trader/utils"
 	"github.com/shopspring/decimal"
+	log "github.com/sirupsen/logrus"
 )
 
 type IStrategy interface {
@@ -18,6 +20,7 @@ type IStrategy interface {
 	OnOrderUpdate(message map[string]interface{})
 	GetStreams() []string
 	GetSymbol() string
+	GetLogger() *log.Entry
 }
 
 type Base struct {
@@ -60,4 +63,7 @@ func (strategy *Base) OnTicker(ticker exchange.Ticker) {
 //响应account
 func (strategy *Base) OnAccount(message map[string]interface{}) {
 	go strategy.Exchange.RefreshAccount()
+}
+func (strategy *Base) GetLogger() *log.Entry {
+	return log.WithField("strategy", utils.GetTypeName(strategy))
 }

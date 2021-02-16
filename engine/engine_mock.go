@@ -7,7 +7,6 @@ import (
 	"github.com/long2ice/trader/strategy"
 	"github.com/long2ice/trader/utils"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -15,17 +14,17 @@ type Mock struct {
 	engineBase
 }
 
-func (e *Mock) Start() {
+func (e *Mock) Start(block bool) {
 	db.Init()
 	for _, s := range e.strategies {
 		db.Client.Where("strategy = ?", utils.GetTypeName(s)).Where("symbol = ?", s.GetSymbol()).Unscoped().Delete(&db.Order{})
 		s.OnConnect()
 		err := e.SubscribeMarketData(s)
 		if err != nil {
-			log.WithField("err", err).Fatal("Fail to subscribe market data")
+			e.GetLogger().WithField("err", err).Fatal("Fail to subscribe market data")
 		}
 	}
-	log.Info("Mock finished")
+	e.GetLogger().Info("Mock finished")
 }
 func (e *Mock) SubscribeMarketData(strategy strategy.IStrategy) error {
 	streams := strategy.GetStreams()
@@ -55,7 +54,7 @@ func (e *Mock) SubscribeMarketData(strategy strategy.IStrategy) error {
 		strategy.On1mKline(kLine)
 	})
 	if err != nil {
-		log.WithField("err", err).WithField("streams", streams).Error("Failed to subscribe market data")
+		e.GetLogger().WithField("err", err).WithField("streams", streams).Error("Failed to subscribe market data")
 	}
 	return nil
 }

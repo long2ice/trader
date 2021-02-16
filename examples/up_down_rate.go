@@ -7,7 +7,6 @@ import (
 	"github.com/long2ice/trader/strategy"
 	"github.com/long2ice/trader/utils"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 )
@@ -42,7 +41,7 @@ func (s *UpDownRate) OnConnect() {
 	s.priceWindow = newPriceWindow()
 	kLines, err := ex.NewKLineService().SetSymbol(s.GetSymbol()).SetInterval("1m").SetLimit(s.KLineLimit).Do()
 	if err != nil {
-		log.WithField("err", err).WithField("symbol", s.GetSymbol()).Fatal("Get latest kline error")
+		s.GetLogger().WithField("err", err).WithField("symbol", s.GetSymbol()).Fatal("Get latest kline error")
 	} else {
 		s.priceWindow.addKLines(kLines)
 	}
@@ -67,7 +66,7 @@ func (s *UpDownRate) On1mKline(kLine exchange.KLine) {
 	//达到止盈或止损
 	if (gains.GreaterThanOrEqual(s.StopProfit) || isGains) && s.side == db.BUY {
 		//涨幅超过止盈或跌幅达到止损卖出
-		log.WithField("symbol", s.GetSymbol()).WithField("涨跌幅", gains).WithField("交易量", kLine.Volume).WithField("当前最新价", s.LatestPrice).Info("达到止盈止损，卖出")
+		s.GetLogger().WithField("symbol", s.GetSymbol()).WithField("涨跌幅", gains).WithField("交易量", kLine.Volume).WithField("当前最新价", s.LatestPrice).Info("达到止盈止损，卖出")
 		//执行卖出
 		order := db.Order{
 			Side:      s.side,
@@ -81,7 +80,7 @@ func (s *UpDownRate) On1mKline(kLine exchange.KLine) {
 		if !DEBUG && vol.GreaterThan(decimal.Zero) {
 			ret, err := s.Exchange.AddOrder(order)
 			if err != nil {
-				log.WithField("err", err).WithField("symbol", s.GetSymbol()).Error("创建卖出订单失败")
+				s.GetLogger().WithField("err", err).WithField("symbol", s.GetSymbol()).Error("创建卖出订单失败")
 				return
 			}
 			vol, _ = decimal.NewFromString(ret["executedQty"].(string))
@@ -99,7 +98,7 @@ func (s *UpDownRate) On1mKline(kLine exchange.KLine) {
 	}
 	//满足策略并且降价幅度大于指定值，或者止损后
 	if ((isDown && downTimes.Div(upTimes).GreaterThanOrEqual(s.Rate)) || isGains) && s.side == db.SELL {
-		log.WithField("symbol", s.GetSymbol()).WithField("交易量", kLine.Volume).WithField("当前最新价", s.LatestPrice).Info("买入")
+		s.GetLogger().WithField("symbol", s.GetSymbol()).WithField("交易量", kLine.Volume).WithField("当前最新价", s.LatestPrice).Info("买入")
 		price := kLine.Close
 		var orderId string
 		vol := decimal.Zero
@@ -121,7 +120,7 @@ func (s *UpDownRate) On1mKline(kLine exchange.KLine) {
 		if !DEBUG && free.GreaterThan(decimal.NewFromInt(10)) {
 			ret, err := s.Exchange.AddOrder(order)
 			if err != nil {
-				log.WithField("symbol", s.GetSymbol()).WithField("err", err).Error("创建购买订单失败")
+				s.GetLogger().WithField("symbol", s.GetSymbol()).WithField("err", err).Error("创建购买订单失败")
 				return
 			}
 			vol, _ := decimal.NewFromString(ret["executedQty"].(string))
