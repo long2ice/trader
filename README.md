@@ -1,6 +1,6 @@
 # Trader
 
-![backtest](https://raw.githubusercontent.com/long2ice/trader/main/images/kline.png)
+![kline](https://raw.githubusercontent.com/long2ice/trader/master/images/kline.png)
 
 ## Introduction
 
@@ -24,7 +24,7 @@ Just see [examples](https://github.com/long2ice/trader/tree/main/examples)
 
 `Trader` has a back test engine, for that you can test your strategy.
 
-![backtest](https://raw.githubusercontent.com/long2ice/trader/main/images/backtest.png)
+![backtest](https://raw.githubusercontent.com/long2ice/trader/master/images/backtest.png?raw=true)
 
 ### Config
 

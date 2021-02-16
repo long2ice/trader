@@ -16,6 +16,19 @@ type Api struct {
 	exchange.BaseApi
 }
 
+func (api *Api) CreateSpotListenKey() (string, bool) {
+	url := apiAddr + "/fapi/v1/listenKey"
+	var result map[string]interface{}
+	var respError map[string]interface{}
+	_, err := api.RestyClient.R().SetResult(&result).SetError(&respError).Post(url)
+	if err != nil || respError != nil {
+		log.WithField("respError", respError).WithField("err", err).Error("createSpotListenKey error")
+		return "", false
+	} else {
+		listenKey := result["listenKey"]
+		return listenKey.(string), true
+	}
+}
 func (api *Api) AccountInfo() ([]exchange.Balance, error) {
 	url := apiAddr + "/fapi/v2/binance?"
 	query := api.BuildCommonQuery(map[string]interface{}{}, true)
@@ -45,7 +58,7 @@ func (api *Api) AccountInfo() ([]exchange.Balance, error) {
 	}
 }
 func (api *Api) CancelOrder(params map[string]interface{}) (map[string]interface{}, error) {
-	return nil, nil
+	panic("not implemented")
 }
 func (api *Api) KLines(params map[string]interface{}) ([][]interface{}, error) {
 	url := apiAddr + "/fapi/v1/klines"
@@ -53,10 +66,10 @@ func (api *Api) KLines(params map[string]interface{}) ([][]interface{}, error) {
 	query := api.BuildCommonQuery(params, false)
 	resp, err := api.RestyClient.R().SetError(&respError).Post(url + query)
 	if err != nil {
-		log.WithField("err", err).Error("获取kline失败")
+		log.WithField("err", err).Error("获取KLine失败")
 		return nil, err
 	} else if respError != nil {
-		log.WithField("respError", respError).Error("获取kline失败")
+		log.WithField("respError", respError).Error("获取KLine失败")
 		return nil, errors.New(respError["msg"].(string))
 	} else {
 		var result [][]interface{}

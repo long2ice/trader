@@ -111,10 +111,10 @@ func (api *Api) KLines(params map[string]interface{}) ([][]interface{}, error) {
 	url := apiAddr + "/api/v3/klines?" + query
 	resp, err := api.RestyClient.R().SetError(&respError).Get(url)
 	if err != nil {
-		log.WithField("err", err).Error("获取kline失败")
+		log.WithField("err", err).Error("获取KLine失败")
 		return nil, err
 	} else if respError != nil {
-		log.WithField("respError", respError).Error("获取kline失败")
+		log.WithField("respError", respError).Error("获取KLine失败")
 		return nil, errors.New(respError["msg"].(string))
 	} else {
 		var result [][]interface{}

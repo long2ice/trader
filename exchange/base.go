@@ -73,6 +73,7 @@ type IApi interface {
 	CancelOrder(params map[string]interface{}) (map[string]interface{}, error)
 	AddOrder(params map[string]interface{}) (map[string]interface{}, error)
 	KLines(params map[string]interface{}) ([][]interface{}, error)
+	CreateSpotListenKey() (string, bool)
 }
 
 type BaseApi struct {
