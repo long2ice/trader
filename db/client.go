@@ -9,7 +9,7 @@ import (
 
 var Client *gorm.DB
 
-func Init() {
+func init() {
 	var err error
 	Client, err = gorm.Open(mysql.Open(conf.DatabaseDsn), &gorm.Config{})
 	if err != nil {
