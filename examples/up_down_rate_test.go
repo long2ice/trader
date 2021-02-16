@@ -13,6 +13,7 @@ import (
 )
 
 func TestUpDownRate(t *testing.T) {
+	conf.InitConfig("config.yml")
 	eng := (*engine.GetEngine(exchange.Mock, conf.BinanceApiKey, conf.BinanceApiSecret)).(*engine.Mock)
 	BaseAsset := "ETH"
 	QuoteAsset := "USDT"
@@ -28,7 +29,6 @@ func TestUpDownRate(t *testing.T) {
 		Base: strategy.Base{
 			Streams:    []string{strings.ToLower(symbol) + "@kline_1m"},
 			FundRatio:  decimal.NewFromFloat(1),
-			TotalFund:  decimal.NewFromInt(100),
 			StopProfit: decimal.NewFromFloat(0.02),
 			StopLoss:   decimal.NewFromFloat(0.06),
 			BaseAsset:  BaseAsset,
