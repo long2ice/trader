@@ -32,7 +32,7 @@ var engines = make(map[exchange.Type]*IEngine)
 
 func (e *engineBase) RegisterStrategy(s strategy.IStrategy) {
 	e.strategies = append(e.strategies, s)
-	e.GetLogger().WithField("strategy", utils.GetTypeName(s)).Info("Register strategy success")
+	e.GetLogger().WithField("symbol", s.GetSymbol()).WithField("strategy", utils.GetTypeName(s)).Info("Register strategy success")
 }
 
 func GetEngine(exchangeType exchange.Type, apiKey string, apiSecret string) *IEngine {
@@ -43,7 +43,7 @@ func GetEngine(exchangeType exchange.Type, apiKey string, apiSecret string) *IEn
 
 	ex, err := exchange.NewExchange(exchangeType, apiKey, apiSecret)
 	if err != nil {
-		e.GetLogger().WithField("err", err).Fatal("New exchange failed")
+		log.WithField("err", err).Fatal("New exchange failed")
 	}
 	eb := engineBase{Exchange: ex, ExchangeType: exchangeType, apiKey: apiKey, apiSecret: apiSecret}
 	if exchangeType == exchange.Mock {
