@@ -81,7 +81,7 @@ func TestUpDownRate(t *testing.T) {
 
 #### Run strategy
 
-After test strategy and you now it's effective，that's the time to run it.
+After test strategy, and it's effective, that's the time to run it.
 
 ```go
 package main
