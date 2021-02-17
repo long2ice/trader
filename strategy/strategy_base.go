@@ -21,7 +21,7 @@ type IStrategy interface {
 	GetStreams() []string
 	GetSymbol() string
 	GetLogger() *log.Entry
-	GetAvailableFunds() []decimal.Decimal
+	GetAvailableFunds() decimal.Decimal
 }
 
 type Base struct {
