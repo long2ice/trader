@@ -21,6 +21,7 @@ type IStrategy interface {
 	GetStreams() []string
 	GetSymbol() string
 	GetLogger() *log.Entry
+	GetAvailableFunds() []decimal.Decimal
 }
 
 type Base struct {
@@ -53,6 +54,11 @@ func (strategy *Base) GetSymbol() string {
 //获取行情streams
 func (strategy *Base) GetStreams() []string {
 	return strategy.Streams
+}
+
+//获取可用资金
+func (strategy *Base) GetAvailableFunds() decimal.Decimal {
+	return strategy.FundRatio.Mul(strategy.Fund.TotalFund)
 }
 
 //响应ticker
