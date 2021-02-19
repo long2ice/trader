@@ -14,7 +14,7 @@ func TestBinanceExchange_RefreshAccount(t *testing.T) {
 	Assert := assert.New(t)
 	ex, err := exchange.NewExchange(exchange.BinanceSpot, conf.BinanceApiKey, conf.BinanceApiSecret)
 	if err != nil {
-		log.WithField("err", err).Fatal("创建变交易所失败")
+		log.WithField("err", err).Error("创建变交易所失败")
 	}
 	ex.RefreshAccount()
 
@@ -30,7 +30,7 @@ func TestBinanceExchange_RefreshAccount(t *testing.T) {
 func TestBinanceExchange_AddOrder(t *testing.T) {
 	ex, err := exchange.NewExchange(exchange.BinanceSpot, conf.BinanceApiKey, conf.BinanceApiSecret)
 	if err != nil {
-		log.WithField("err", err).Fatal("创建交易所失败")
+		log.WithField("err", err).Error("创建交易所失败")
 	}
 	ret, err := ex.AddOrder(db.Order{
 		Side:   "BUY",

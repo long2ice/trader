@@ -21,7 +21,7 @@ func (e *Mock) Start(block bool) {
 		s.OnConnect()
 		err := e.SubscribeMarketData(s)
 		if err != nil {
-			e.GetLogger().WithField("err", err).Fatal("Fail to subscribe market data")
+			e.GetLogger().WithField("err", err).Error("Fail to subscribe market data")
 		}
 	}
 	e.GetLogger().Info("Mock finished")

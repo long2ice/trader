@@ -26,7 +26,7 @@ func (e *Engine) Start(block bool) {
 		s.OnConnect()
 		err := e.SubscribeMarketData(s)
 		if err != nil {
-			e.GetLogger().WithField("err", err).Fatal("Subscribe market data fail")
+			e.GetLogger().WithField("err", err).Error("Subscribe market data fail")
 		}
 	}
 	e.GetLogger().Info("Start engine success")

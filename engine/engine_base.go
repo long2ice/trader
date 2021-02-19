@@ -43,7 +43,7 @@ func GetEngine(exchangeType exchange.Type, apiKey string, apiSecret string) *IEn
 
 	ex, err := exchange.NewExchange(exchangeType, apiKey, apiSecret)
 	if err != nil {
-		log.WithField("err", err).Fatal("New exchange failed")
+		log.WithField("err", err).Error("New exchange failed")
 	}
 	eb := Base{Exchange: ex, ExchangeType: exchangeType, apiKey: apiKey, apiSecret: apiSecret}
 	if exchangeType == exchange.Mock {

@@ -13,10 +13,10 @@ func Init() {
 	var err error
 	Client, err = gorm.Open(mysql.Open(conf.DatabaseDsn), &gorm.Config{})
 	if err != nil {
-		log.WithField("err", err).Fatal("Fail to connect db")
+		log.WithField("err", err).Error("Fail to connect db")
 	}
 	err = Client.AutoMigrate(&Order{}, &KLine{}, &Fund{})
 	if err != nil {
-		log.WithField("err", err).Fatal("AutoMigrate db fail")
+		log.WithField("err", err).Error("AutoMigrate db fail")
 	}
 }

@@ -43,7 +43,7 @@ func (s *UpDownRate) OnConnect() {
 	service.SetSymbol(s.GetSymbol()).SetInterval("1m").SetLimit(s.KLineLimit)
 	kLines, err := service.Do()
 	if err != nil {
-		s.GetLogger().WithField("err", err).WithField("symbol", s.GetSymbol()).Fatal("Get latest kline error")
+		s.GetLogger().WithField("err", err).WithField("symbol", s.GetSymbol()).Error("Get latest kline error")
 	} else {
 		s.priceWindow.addKLines(kLines)
 	}
