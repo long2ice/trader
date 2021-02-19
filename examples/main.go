@@ -26,7 +26,5 @@ func main() {
 		}},
 	)
 	eng.Start(false)
-
-	server.SetEngine(eng)
 	server.Start()
 }

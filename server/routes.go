@@ -2,7 +2,10 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/long2ice/trader/conf"
 	"github.com/long2ice/trader/db"
+	"github.com/long2ice/trader/engine"
+	"github.com/long2ice/trader/exchange"
 	"github.com/long2ice/trader/utils"
 	"gorm.io/gorm"
 )
@@ -36,6 +39,8 @@ func addFund(c *gin.Context) {
 func getStrategy(c *gin.Context) {
 	symbol := c.Query("symbol")
 	strategy := c.Query("strategy")
+	ex := c.Query("exchange")
+	eng := (*engine.GetEngine(exchange.Type(ex), conf.BinanceApiKey, conf.BinanceApiSecret)).(*engine.Engine)
 	strategies := eng.Base.Strategies
 	data := make(map[string]interface{})
 	for _, s := range strategies {
