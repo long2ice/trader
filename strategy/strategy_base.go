@@ -20,6 +20,13 @@ type IStrategy interface {
 	OnOrderUpdate(message map[string]interface{})
 	GetStreams() []string
 	GetSymbol() string
+	GetBaseAsset() string
+	GetQuoteAsset() string
+	GetFundRatio() decimal.Decimal
+	GetFund() decimal.Decimal
+	GetStopLoss() decimal.Decimal
+	GetStopProfit() decimal.Decimal
+	GetLatestPrice() decimal.Decimal
 	GetLogger() *log.Entry
 	GetAvailableFunds() decimal.Decimal
 }
@@ -72,4 +79,30 @@ func (strategy *Base) OnAccount(message map[string]interface{}) {
 }
 func (strategy *Base) GetLogger() *log.Entry {
 	return log.WithField("strategy", utils.GetTypeName(strategy))
+}
+func (strategy *Base) GetBaseAsset() string {
+	return strategy.BaseAsset
+}
+func (strategy *Base) GetQuoteAsset() string {
+	return strategy.QuoteAsset
+
+}
+func (strategy *Base) GetFundRatio() decimal.Decimal {
+	return strategy.FundRatio
+
+}
+func (strategy *Base) GetFund() decimal.Decimal {
+	return strategy.Fund.TotalFund
+
+}
+func (strategy *Base) GetStopLoss() decimal.Decimal {
+	return strategy.StopLoss
+}
+func (strategy *Base) GetStopProfit() decimal.Decimal {
+	return strategy.StopProfit
+
+}
+func (strategy *Base) GetLatestPrice() decimal.Decimal {
+	return strategy.LatestPrice
+
 }

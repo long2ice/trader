@@ -4,6 +4,7 @@ import (
 	"github.com/long2ice/trader/conf"
 	"github.com/long2ice/trader/engine"
 	"github.com/long2ice/trader/exchange"
+	"github.com/long2ice/trader/server"
 	"github.com/long2ice/trader/strategy"
 	"github.com/shopspring/decimal"
 )
@@ -24,5 +25,8 @@ func main() {
 			Streams:    []string{"ethusdt@kline_1m", "ethusdt@miniTicker"},
 		}},
 	)
-	eng.Start(true)
+	eng.Start(false)
+
+	server.SetEngine(eng)
+	server.Start()
 }

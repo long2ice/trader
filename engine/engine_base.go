@@ -15,23 +15,23 @@ type IEngine interface {
 	GetLogger() *log.Entry
 }
 
-type engineBase struct {
+type Base struct {
 	IEngine
 	ExchangeType exchange.Type
 	Exchange     exchange.IExchange
-	strategies   []strategy.IStrategy
+	Strategies   []strategy.IStrategy
 	apiKey       string
 	apiSecret    string
 }
 
-func (e *engineBase) GetLogger() *log.Entry {
+func (e *Base) GetLogger() *log.Entry {
 	return log.WithField("exchange", e.ExchangeType)
 }
 
 var engines = make(map[exchange.Type]*IEngine)
 
-func (e *engineBase) RegisterStrategy(s strategy.IStrategy) {
-	e.strategies = append(e.strategies, s)
+func (e *Base) RegisterStrategy(s strategy.IStrategy) {
+	e.Strategies = append(e.Strategies, s)
 	e.GetLogger().WithField("symbol", s.GetSymbol()).WithField("strategy", utils.GetTypeName(s)).Info("Register strategy success")
 }
 
@@ -45,11 +45,11 @@ func GetEngine(exchangeType exchange.Type, apiKey string, apiSecret string) *IEn
 	if err != nil {
 		log.WithField("err", err).Fatal("New exchange failed")
 	}
-	eb := engineBase{Exchange: ex, ExchangeType: exchangeType, apiKey: apiKey, apiSecret: apiSecret}
+	eb := Base{Exchange: ex, ExchangeType: exchangeType, apiKey: apiKey, apiSecret: apiSecret}
 	if exchangeType == exchange.Mock {
-		e = &Mock{engineBase: eb}
+		e = &Mock{Base: eb}
 	} else {
-		e = &Engine{engineBase: eb}
+		e = &Engine{Base: eb}
 	}
 	engines[exchangeType] = &e
 	return &e

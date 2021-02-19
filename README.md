@@ -13,6 +13,7 @@
 - Current support spot/future of [binance](https://www.binance.com/), more exchange work in progress.
 - Easy write your own strategy.
 - Back test engine support to test your strategy.
+- Restful api server integration.
 
 ## Quick Start
 
@@ -132,6 +133,24 @@ INFO[0005] Start trader success
 ```
 
 You can earn `BTC` and `ETH` when sleep now!
+
+## Restful api server
+
+### GET /orders
+
+Get orders by strategy and symbol.
+
+### GET /strategy
+
+Get strategy information by strategy and symbol.
+
+### GET /fund
+
+Get fund information by strategy.
+
+### POST /fund
+
+Add fund for strategy.
 
 ## License
 

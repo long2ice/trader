@@ -15,13 +15,13 @@ import (
 )
 
 type Engine struct {
-	engineBase
+	Base
 }
 
 func (e *Engine) Start(block bool) {
 	db.Init()
 	e.SubscribeAccount()
-	for _, s := range e.strategies {
+	for _, s := range e.Strategies {
 		//订阅行情
 		s.OnConnect()
 		err := e.SubscribeMarketData(s)
@@ -101,7 +101,7 @@ func (e *Engine) SubscribeAccount() {
 	err := e.Exchange.SubscribeAccount(func(message map[string]interface{}) {
 		e.GetLogger().WithField("message", message).Info("Account data")
 		eventType, _ := message["e"].(string)
-		for _, s := range e.strategies {
+		for _, s := range e.Strategies {
 			switch eventType {
 			case "outboundAccountPosition": //账户更新
 				go s.OnAccount(message)
