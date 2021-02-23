@@ -1,7 +1,8 @@
-package exchange
+package binance
 
 import (
 	"github.com/long2ice/trader/db"
+	"github.com/long2ice/trader/exchange"
 	"github.com/shopspring/decimal"
 	"reflect"
 )
@@ -28,7 +29,7 @@ type CreateOrderService struct {
 	NewClientOrderId string          `json:"newClientOrderId,omitempty"`
 	StopPrice        decimal.Decimal `json:"stopPrice,omitempty"`
 	NewOrderRespType string          `json:"newOrderRespType,omitempty"`
-	Api              IApi
+	Api              exchange.IApi
 }
 
 func (service *CreateOrderService) SetSymbol(symbol string) ICreateOrderService {

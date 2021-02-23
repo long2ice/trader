@@ -30,7 +30,7 @@ func (api *Api) CreateSpotListenKey() (string, bool) {
 	}
 }
 func (api *Api) AccountInfo() ([]exchange.Balance, error) {
-	url := apiAddr + "/fapi/v2/binance?"
+	url := apiAddr + "/fapi/v2/balance?"
 	query := api.BuildCommonQuery(map[string]interface{}{}, true)
 	var respError map[string]interface{}
 	var result []map[string]interface{}
@@ -57,7 +57,26 @@ func (api *Api) AccountInfo() ([]exchange.Balance, error) {
 	}
 }
 func (api *Api) CancelOrder(params map[string]interface{}) (map[string]interface{}, error) {
-	panic("not implemented")
+	url := apiAddr + "/fapi/v1/order?"
+	query := api.BuildCommonQuery(params, true)
+	var respError map[string]interface{}
+	resp, err := api.RestyClient.R().SetError(&respError).Delete(url + query)
+	if err != nil {
+		log.WithField("err", err).Error("撤单失败")
+		return nil, err
+	} else if respError != nil {
+		log.WithField("respError", respError).Error("撤单失败")
+		return nil, errors.New(respError["msg"].(string))
+	} else {
+		var ret map[string]interface{}
+		err := json.Unmarshal(resp.Body(), &ret)
+		if err != nil {
+			log.WithField("err", err).Error("解析撤单返回数据失败")
+			return ret, err
+		}
+		log.WithField("撤单详情", ret).Info("撤单成功")
+		return ret, nil
+	}
 }
 func (api *Api) KLines(params map[string]interface{}) ([][]interface{}, error) {
 	url := apiAddr + "/fapi/v1/klines?"

@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/long2ice/trader/db"
 	"github.com/long2ice/trader/exchange"
+	"github.com/long2ice/trader/exchange/binance"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/resty.v1"
 	"strings"
@@ -27,10 +28,10 @@ type Future struct {
 }
 
 type CancelOrderService struct {
-	exchange.CancelOrderService
+	binance.CancelOrderService
 }
 type CreateOrderService struct {
-	exchange.CreateOrderService
+	binance.CreateOrderService
 }
 
 func init() {
@@ -133,7 +134,7 @@ func (future *Future) SubscribeAccount(callback func(map[string]interface{})) er
 	return nil
 }
 func (future *Future) AddOrder(order db.Order) (map[string]interface{}, error) {
-	service := exchange.CreateOrderService{
+	service := binance.CreateOrderService{
 		Symbol: order.Symbol,
 		Side:   order.Side,
 		Type:   order.Type,
@@ -144,7 +145,7 @@ func (future *Future) AddOrder(order db.Order) (map[string]interface{}, error) {
 }
 
 func (future *Future) CancelOrder(symbol string, orderId string) (map[string]interface{}, error) {
-	service := exchange.CancelOrderService{
+	service := binance.CancelOrderService{
 		Symbol:  symbol,
 		OrderId: orderId,
 		Api:     &future.Api,

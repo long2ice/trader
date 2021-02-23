@@ -1,6 +1,7 @@
-package exchange
+package binance
 
 import (
+	"github.com/long2ice/trader/exchange"
 	"reflect"
 )
 
@@ -13,11 +14,11 @@ type ICancelOrderService interface {
 	Do() (map[string]interface{}, error)
 }
 type CancelOrderService struct {
-	Symbol            string `json:"Symbol"`
+	Symbol            string `json:"symbol"`
 	NewClientOrderId  string `json:"newClientOrderId,omitempty"`
 	OrigClientOrderId string `json:"origClientOrderId,omitempty"`
 	OrderId           string `json:"orderId,omitempty"`
-	Api               IApi
+	Api               exchange.IApi
 }
 
 func (service *CancelOrderService) SetSymbol(symbol string) ICancelOrderService {
