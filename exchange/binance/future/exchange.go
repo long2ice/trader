@@ -7,6 +7,7 @@ import (
 	"github.com/long2ice/trader/db"
 	"github.com/long2ice/trader/exchange"
 	"github.com/long2ice/trader/exchange/binance"
+	"github.com/shopspring/decimal"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/resty.v1"
 	"strings"
@@ -32,6 +33,7 @@ type CancelOrderService struct {
 }
 type CreateOrderService struct {
 	binance.CreateOrderService
+	PositionSide string `json:"positionSide"`
 }
 
 func init() {
@@ -134,21 +136,33 @@ func (future *Future) SubscribeAccount(callback func(map[string]interface{})) er
 	return nil
 }
 func (future *Future) AddOrder(order db.Order) (map[string]interface{}, error) {
-	service := binance.CreateOrderService{
-		Symbol: order.Symbol,
-		Side:   order.Side,
-		Type:   order.Type,
-		Price:  order.Price,
-		Api:    &future.Api,
+	var positionSide string
+	if order.Vol.GreaterThan(decimal.Zero) {
+		positionSide = "LONG"
+	} else {
+		positionSide = "SHORT"
+	}
+	service := CreateOrderService{
+		binance.CreateOrderService{
+			Symbol:   order.Symbol,
+			Side:     order.Side,
+			Type:     order.Type,
+			Price:    order.Price,
+			Quantity: order.Vol,
+			Api:      &future.Api,
+		},
+		positionSide,
 	}
 	return future.Api.AddOrder(service.Collect())
 }
 
 func (future *Future) CancelOrder(symbol string, orderId string) (map[string]interface{}, error) {
-	service := binance.CancelOrderService{
-		Symbol:  symbol,
-		OrderId: orderId,
-		Api:     &future.Api,
+	service := CancelOrderService{
+		binance.CancelOrderService{
+			Symbol:  symbol,
+			OrderId: orderId,
+			Api:     &future.Api,
+		},
 	}
 	return future.Api.CancelOrder(service.Collect())
 }

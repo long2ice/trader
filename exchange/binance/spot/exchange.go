@@ -30,11 +30,13 @@ func init() {
 }
 func (s *Spot) AddOrder(order db.Order) (map[string]interface{}, error) {
 	service := binance.CreateOrderService{
-		Symbol: order.Symbol,
-		Side:   order.Side,
-		Type:   order.Type,
-		Price:  order.Price,
-		Api:    &s.Api,
+		Symbol:        order.Symbol,
+		Side:          order.Side,
+		Type:          order.Type,
+		Price:         order.Price,
+		Quantity:      order.Vol,
+		QuoteOrderQty: order.Amount,
+		Api:           &s.Api,
 	}
 	return s.Api.AddOrder(service.Collect())
 }

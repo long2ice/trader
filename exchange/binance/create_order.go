@@ -26,6 +26,7 @@ type CreateOrderService struct {
 	TimeInForce      string          `json:"timeInForce,omitempty"`
 	Quantity         decimal.Decimal `json:"quantity,omitempty"`
 	Price            decimal.Decimal `json:"price,omitempty"`
+	QuoteOrderQty    decimal.Decimal `json:"quoteOrderQty,omitempty"`
 	NewClientOrderId string          `json:"newClientOrderId,omitempty"`
 	StopPrice        decimal.Decimal `json:"stopPrice,omitempty"`
 	NewOrderRespType string          `json:"newOrderRespType,omitempty"`

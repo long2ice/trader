@@ -12,6 +12,7 @@ type Order struct {
 	Side        Side `gorm:"type:enum('BUY', 'SELL');"`
 	Vol         decimal.Decimal
 	Price       decimal.Decimal
+	Amount      decimal.Decimal
 	Symbol      string
 	Type        PriceType `gorm:"type:enum('LIMIT', 'MARKET');"`
 	Timestamp   time.Time
