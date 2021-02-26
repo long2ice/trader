@@ -38,16 +38,15 @@ func (s *Spot) AddOrder(order db.Order) (map[string]interface{}, error) {
 		QuoteOrderQty: order.Amount,
 		Api:           &s.Api,
 	}
-	return s.Api.AddOrder(service.Collect())
+	return service.Do()
 }
-
 func (s *Spot) CancelOrder(symbol string, orderId string) (map[string]interface{}, error) {
 	service := binance.CancelOrderService{
 		Symbol:  symbol,
 		OrderId: orderId,
 		Api:     &s.Api,
 	}
-	return s.Api.CancelOrder(service.Collect())
+	return service.Do()
 }
 func (s *Spot) NewExchange(apiKey string, apiSecret string) exchange.IExchange {
 	b := &Spot{

@@ -33,9 +33,27 @@ type CancelOrderService struct {
 }
 type CreateOrderService struct {
 	binance.CreateOrderService
-	PositionSide string `json:"positionSide"`
+	PositionSide string
 }
 
+func (service *CancelOrderService) Collect() map[string]interface{} {
+	params := make(map[string]interface{})
+	params["symbol"] = service.Symbol
+	params["origClientOrderId"] = service.OrigClientOrderId
+	params["orderId"] = service.OrderId
+	return params
+}
+func (service *CreateOrderService) Collect() map[string]interface{} {
+	params := make(map[string]interface{})
+	params["symbol"] = service.Symbol
+	params["side"] = service.Side
+	params["positionSide"] = service.PositionSide
+	params["timeInForce"] = service.TimeInForce
+	params["type"] = service.Type
+	params["quantity"] = service.Quantity
+	params["price"] = service.Price
+	return params
+}
 func init() {
 	exchange.RegisterExchange(exchange.BinanceFuture, &Future{})
 }
@@ -153,7 +171,7 @@ func (future *Future) AddOrder(order db.Order) (map[string]interface{}, error) {
 		},
 		positionSide,
 	}
-	return future.Api.AddOrder(service.Collect())
+	return service.Do()
 }
 
 func (future *Future) CancelOrder(symbol string, orderId string) (map[string]interface{}, error) {
@@ -164,7 +182,7 @@ func (future *Future) CancelOrder(symbol string, orderId string) (map[string]int
 			Api:     &future.Api,
 		},
 	}
-	return future.Api.CancelOrder(service.Collect())
+	return service.Do()
 }
 func (future *Future) NewKLineService() exchange.IKLineService {
 	var p exchange.IKLineService

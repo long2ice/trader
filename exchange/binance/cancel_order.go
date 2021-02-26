@@ -14,10 +14,10 @@ type ICancelOrderService interface {
 	Do() (map[string]interface{}, error)
 }
 type CancelOrderService struct {
-	Symbol            string `json:"symbol"`
-	NewClientOrderId  string `json:"newClientOrderId,omitempty"`
-	OrigClientOrderId string `json:"origClientOrderId,omitempty"`
-	OrderId           string `json:"orderId,omitempty"`
+	Symbol            string
+	NewClientOrderId  string
+	OrigClientOrderId string
+	OrderId           string
 	Api               exchange.IApi
 }
 
@@ -38,7 +38,12 @@ func (service *CancelOrderService) SetOthers(params map[string]interface{}) ICan
 }
 
 func (service *CancelOrderService) Collect() map[string]interface{} {
-	return nil
+	params := make(map[string]interface{})
+	params["symbol"] = service.Symbol
+	params["origClientOrderId"] = service.OrigClientOrderId
+	params["orderId"] = service.OrderId
+	params["newClientOrderId"] = service.NewClientOrderId
+	return params
 }
 
 func (service *CancelOrderService) Do() (map[string]interface{}, error) {

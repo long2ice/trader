@@ -20,16 +20,16 @@ type ICreateOrderService interface {
 }
 
 type CreateOrderService struct {
-	Symbol           string          `json:"symbol"`
-	Side             db.Side         `json:"side"`
-	Type             db.PriceType    `json:"type"`
-	TimeInForce      string          `json:"timeInForce,omitempty"`
-	Quantity         decimal.Decimal `json:"quantity,omitempty"`
-	Price            decimal.Decimal `json:"price,omitempty"`
-	QuoteOrderQty    decimal.Decimal `json:"quoteOrderQty,omitempty"`
-	NewClientOrderId string          `json:"newClientOrderId,omitempty"`
-	StopPrice        decimal.Decimal `json:"stopPrice,omitempty"`
-	NewOrderRespType string          `json:"newOrderRespType,omitempty"`
+	Symbol           string
+	Side             db.Side
+	Type             db.PriceType
+	TimeInForce      string
+	Quantity         decimal.Decimal
+	Price            decimal.Decimal
+	QuoteOrderQty    decimal.Decimal
+	NewClientOrderId string
+	StopPrice        decimal.Decimal
+	NewOrderRespType string
 	Api              exchange.IApi
 }
 
@@ -62,7 +62,17 @@ func (service *CreateOrderService) SetOthers(params map[string]interface{}) ICre
 	return service
 }
 func (service *CreateOrderService) Collect() map[string]interface{} {
-	return nil
+	params := make(map[string]interface{})
+	params["symbol"] = service.Symbol
+	params["side"] = service.Side
+	params["type"] = service.Type
+	params["timeInForce"] = service.TimeInForce
+	params["quantity"] = service.Quantity
+	params["quoteOrderQty"] = service.QuoteOrderQty
+	params["newClientOrderId"] = service.NewClientOrderId
+	params["stopPrice"] = service.StopPrice
+	params["newOrderRespType"] = service.NewOrderRespType
+	return params
 }
 func (service *CreateOrderService) Do() (map[string]interface{}, error) {
 	ret, err := service.Api.AddOrder(service.Collect())
