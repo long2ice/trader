@@ -88,7 +88,7 @@ func (api *BaseApi) BuildCommonQuery(params map[string]interface{}, withSign boo
 	var joins []string
 	for key, value := range params {
 		switch value.(type) {
-		case string:
+		case string, interface{}, decimal.Decimal:
 			joins = append(joins, fmt.Sprintf("%s=%s", key, value))
 		case int:
 			joins = append(joins, fmt.Sprintf("%s=%d", key, value))

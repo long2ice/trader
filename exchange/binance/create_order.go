@@ -31,6 +31,7 @@ func (service *CreateOrderService) Collect() map[string]interface{} {
 	params["symbol"] = service.Symbol
 	params["side"] = service.Side
 	params["type"] = service.Type
+	params["timeInForce"] = "GTC"
 	if service.TimeInForce != nil {
 		params["timeInForce"] = *service.TimeInForce
 	}
@@ -56,7 +57,8 @@ func (service *CreateOrderService) Collect() map[string]interface{} {
 	return params
 }
 func (service *CreateOrderService) Do() (map[string]interface{}, error) {
-	ret, err := service.Api.AddOrder(service.Collect())
+	params := service.Collect()
+	ret, err := service.Api.AddOrder(params)
 	if err != nil {
 		return ret, err
 	}

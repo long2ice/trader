@@ -1,4 +1,4 @@
-package spot
+package future
 
 import (
 	"github.com/long2ice/trader/conf"
@@ -6,7 +6,6 @@ import (
 	"github.com/long2ice/trader/exchange"
 	"github.com/shopspring/decimal"
 	log "github.com/sirupsen/logrus"
-	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
 )
@@ -16,25 +15,8 @@ func TestMain(m *testing.M) {
 	code := m.Run()
 	os.Exit(code)
 }
-func TestBinanceExchange_RefreshAccount(t *testing.T) {
-	Assert := assert.New(t)
-	ex, err := exchange.NewExchange(exchange.BinanceSpot, conf.BinanceApiKey, conf.BinanceApiSecret)
-	if err != nil {
-		log.WithField("err", err).Error("创建变交易所失败")
-	}
-	ex.RefreshAccount()
-
-	btc := ex.GetBalance("BTC")
-	usdt := ex.GetBalance("USDT")
-
-	log.WithField("btc", btc).WithField("usdt", usdt).Info()
-
-	Assert.NotEqual(btc, decimal.NewFromInt(0))
-	Assert.NotEqual(usdt, decimal.NewFromInt(0))
-
-}
 func TestBinanceExchange_AddOrder(t *testing.T) {
-	ex, err := exchange.NewExchange(exchange.BinanceSpot, conf.BinanceApiKey, conf.BinanceApiSecret)
+	ex, err := exchange.NewExchange(exchange.BinanceFuture, conf.BinanceApiKey, conf.BinanceApiSecret)
 	if err != nil {
 		log.WithField("err", err).Error("创建交易所失败")
 	}
