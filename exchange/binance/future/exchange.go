@@ -39,8 +39,12 @@ type CreateOrderService struct {
 func (service *CancelOrderService) Collect() map[string]interface{} {
 	params := make(map[string]interface{})
 	params["symbol"] = service.Symbol
-	params["origClientOrderId"] = service.OrigClientOrderId
-	params["orderId"] = service.OrderId
+	if service.OrigClientOrderId != nil {
+		params["origClientOrderId"] = *service.OrigClientOrderId
+	}
+	if service.OrderId != nil {
+		params["orderId"] = *service.OrderId
+	}
 	return params
 }
 func (service *CreateOrderService) Collect() map[string]interface{} {
@@ -48,10 +52,25 @@ func (service *CreateOrderService) Collect() map[string]interface{} {
 	params["symbol"] = service.Symbol
 	params["side"] = service.Side
 	params["positionSide"] = service.PositionSide
-	params["timeInForce"] = service.TimeInForce
 	params["type"] = service.Type
-	params["quantity"] = service.Quantity
-	params["price"] = service.Price
+	if service.TimeInForce != nil {
+		params["timeInForce"] = *service.TimeInForce
+	}
+	if service.Price != nil {
+		params["price"] = *service.Price
+	}
+	if service.Quantity != nil {
+		params["quantity"] = *service.Quantity
+	}
+	if service.NewClientOrderId != nil {
+		params["newClientOrderId"] = *service.NewClientOrderId
+	}
+	if service.StopPrice != nil {
+		params["stopPrice"] = *service.StopPrice
+	}
+	if service.NewOrderRespType != nil {
+		params["newOrderRespType"] = *service.NewOrderRespType
+	}
 	return params
 }
 func init() {
@@ -165,8 +184,8 @@ func (future *Future) AddOrder(order db.Order) (map[string]interface{}, error) {
 			Symbol:   order.Symbol,
 			Side:     order.Side,
 			Type:     order.Type,
-			Price:    order.Price,
-			Quantity: order.Vol,
+			Price:    &order.Price,
+			Quantity: &order.Vol,
 			Api:      &future.Api,
 		},
 		positionSide,
@@ -178,7 +197,7 @@ func (future *Future) CancelOrder(symbol string, orderId string) (map[string]int
 	service := CancelOrderService{
 		binance.CancelOrderService{
 			Symbol:  symbol,
-			OrderId: orderId,
+			OrderId: &orderId,
 			Api:     &future.Api,
 		},
 	}

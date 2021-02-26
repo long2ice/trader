@@ -33,9 +33,9 @@ func (s *Spot) AddOrder(order db.Order) (map[string]interface{}, error) {
 		Symbol:        order.Symbol,
 		Side:          order.Side,
 		Type:          order.Type,
-		Price:         order.Price,
-		Quantity:      order.Vol,
-		QuoteOrderQty: order.Amount,
+		Price:         &order.Price,
+		Quantity:      &order.Vol,
+		QuoteOrderQty: &order.Amount,
 		Api:           &s.Api,
 	}
 	return service.Do()
@@ -43,7 +43,7 @@ func (s *Spot) AddOrder(order db.Order) (map[string]interface{}, error) {
 func (s *Spot) CancelOrder(symbol string, orderId string) (map[string]interface{}, error) {
 	service := binance.CancelOrderService{
 		Symbol:  symbol,
-		OrderId: orderId,
+		OrderId: &orderId,
 		Api:     &s.Api,
 	}
 	return service.Do()
