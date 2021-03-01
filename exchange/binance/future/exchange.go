@@ -53,13 +53,11 @@ func (service *CreateOrderService) Collect() map[string]interface{} {
 	params["side"] = service.Side
 	params["positionSide"] = service.PositionSide
 	params["type"] = service.Type
-	if service.TimeInForce != nil {
+	if service.Type == db.LIMIT {
 		params["timeInForce"] = *service.TimeInForce
-	}
-	if service.Price != nil {
 		params["price"] = *service.Price
-	}
-	if service.Quantity != nil {
+		params["quantity"] = *service.Quantity
+	} else if service.Type == db.MARKET {
 		params["quantity"] = *service.Quantity
 	}
 	if service.NewClientOrderId != nil {

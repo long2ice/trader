@@ -31,18 +31,19 @@ func (service *CreateOrderService) Collect() map[string]interface{} {
 	params["symbol"] = service.Symbol
 	params["side"] = service.Side
 	params["type"] = service.Type
-	if service.TimeInForce != nil {
+	if service.Type == db.LIMIT {
 		params["timeInForce"] = *service.TimeInForce
-	}
-	if service.Price != nil {
 		params["price"] = *service.Price
-	}
-	if service.Quantity != nil {
 		params["quantity"] = *service.Quantity
+	} else if service.Type == db.MARKET {
+		if service.Quantity != nil {
+			params["quantity"] = *service.Quantity
+		}
+		if service.QuoteOrderQty != nil {
+			params["quoteOrderQty"] = *service.QuoteOrderQty
+		}
 	}
-	if service.QuoteOrderQty != nil {
-		params["quoteOrderQty"] = *service.QuoteOrderQty
-	}
+
 	if service.NewClientOrderId != nil {
 		params["newClientOrderId"] = *service.NewClientOrderId
 	}
