@@ -31,7 +31,6 @@ func (service *CreateOrderService) Collect() map[string]interface{} {
 	params["symbol"] = service.Symbol
 	params["side"] = service.Side
 	params["type"] = service.Type
-	params["timeInForce"] = "GTC"
 	if service.TimeInForce != nil {
 		params["timeInForce"] = *service.TimeInForce
 	}
