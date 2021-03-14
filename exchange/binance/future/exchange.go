@@ -22,8 +22,8 @@ const (
 )
 
 type Future struct {
-	exchange.BaseExchange
 	Api Api
+	binance.Exchange
 	//余额信息
 	balances []exchange.Balance
 }
@@ -74,6 +74,7 @@ func (service *CreateOrderService) Collect() map[string]interface{} {
 func init() {
 	exchange.RegisterExchange(exchange.BinanceFuture, &Future{})
 }
+
 func (future *Future) SubscribeMarketData(symbols []string, callback func(map[string]interface{})) error {
 	addr := wsMarketAddr + "?streams=" + strings.Join(symbols, "/")
 	wsMarketDataClient, _, err := websocket.DefaultDialer.Dial(addr, nil)

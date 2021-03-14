@@ -10,12 +10,10 @@ import (
 )
 
 type IStrategy interface {
+	RegisterStreamCallback(stream string, callback func(map[string]interface{}))
+	GetStreamCallback(stream string) func(map[string]interface{})
 	//call when market connected
 	OnConnect()
-	//kline msg
-	On1mKline(kLine exchange.KLine)
-	//ticker msg
-	OnTicker(ticker exchange.Ticker)
 	OnAccount(message map[string]interface{})
 	OnOrderUpdate(message map[string]interface{})
 	GetStreams() []string
@@ -51,6 +49,21 @@ type Base struct {
 	StopProfit decimal.Decimal
 	//当前最新价
 	LatestPrice decimal.Decimal
+	callback    map[string]func(map[string]interface{})
+}
+
+func NewStrategy(baseAsset string, quoteAsset string, exchange exchange.IExchange, streams []string, fundRatio decimal.Decimal, stopLoss decimal.Decimal, stopProfit decimal.Decimal) Base {
+	s := Base{
+		BaseAsset:  baseAsset,
+		QuoteAsset: quoteAsset,
+		Exchange:   exchange,
+		Streams:    streams,
+		FundRatio:  fundRatio,
+		StopLoss:   stopLoss,
+		StopProfit: stopProfit,
+		callback:   make(map[string]func(map[string]interface{})),
+	}
+	return s
 }
 
 // 获取交易对
@@ -68,9 +81,14 @@ func (strategy *Base) GetAvailableFunds() decimal.Decimal {
 	return strategy.FundRatio.Mul(strategy.Fund.TotalFund)
 }
 
-//响应ticker
-func (strategy *Base) OnTicker(ticker exchange.Ticker) {
-	strategy.LatestPrice = ticker.LatestPrice
+//监听stream
+func (strategy *Base) RegisterStreamCallback(stream string, callback func(map[string]interface{})) {
+	strategy.callback[stream] = callback
+}
+
+//获取stream回调
+func (strategy *Base) GetStreamCallback(stream string) func(map[string]interface{}) {
+	return strategy.callback[stream]
 }
 
 //响应account
@@ -100,9 +118,7 @@ func (strategy *Base) GetStopLoss() decimal.Decimal {
 }
 func (strategy *Base) GetStopProfit() decimal.Decimal {
 	return strategy.StopProfit
-
 }
 func (strategy *Base) GetLatestPrice() decimal.Decimal {
 	return strategy.LatestPrice
-
 }

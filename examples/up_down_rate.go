@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"github.com/long2ice/trader/db"
-	"github.com/long2ice/trader/exchange"
 	"github.com/long2ice/trader/strategy"
 	"github.com/long2ice/trader/utils"
 	"github.com/shopspring/decimal"
@@ -48,7 +47,8 @@ func (s *UpDownRate) OnConnect() {
 		s.priceWindow.addKLines(kLines)
 	}
 }
-func (s *UpDownRate) On1mKline(kLine exchange.KLine) {
+func (s *UpDownRate) On1mKLine(data map[string]interface{}) {
+	kLine := s.Exchange.ParseKLine(data)
 	if !kLine.Finish {
 		return
 	}
@@ -136,4 +136,8 @@ func (s *UpDownRate) On1mKline(kLine exchange.KLine) {
 		//数据库记录
 		db.Client.Create(&order)
 	}
+}
+func (s *UpDownRate) OnTicker(data map[string]interface{}) {
+	ticker := s.Exchange.ParseTicker(data)
+	s.LatestPrice = ticker.LatestPrice
 }

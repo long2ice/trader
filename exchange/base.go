@@ -41,6 +41,10 @@ type IExchange interface {
 	GetBalances() []Balance
 	//创建exchange
 	NewExchange(apiKey string, apiSecret string) IExchange
+	//ParseKLine
+	ParseKLine(data map[string]interface{}) KLine
+	//ParseTicker
+	ParseTicker(data map[string]interface{}) Ticker
 }
 
 var exchanges = make(map[Type]IExchange)
@@ -53,7 +57,6 @@ type BaseExchange struct {
 	IExchange
 	//余额信息
 	Balances []Balance
-	Api      BaseApi
 }
 
 func (exchange *BaseExchange) GetBalance(asset string) Balance {
@@ -88,7 +91,7 @@ func (api *BaseApi) BuildCommonQuery(params map[string]interface{}, withSign boo
 	var joins []string
 	for key, value := range params {
 		switch value.(type) {
-		case int:
+		case int, int64:
 			joins = append(joins, fmt.Sprintf("%s=%d", key, value))
 		case string, interface{}, decimal.Decimal:
 			joins = append(joins, fmt.Sprintf("%s=%s", key, value))

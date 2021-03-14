@@ -21,7 +21,7 @@ const (
 )
 
 type Spot struct {
-	exchange.BaseExchange
+	binance.Exchange
 	Api Api
 }
 
