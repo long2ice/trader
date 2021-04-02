@@ -11,7 +11,7 @@ import (
 
 type IStrategy interface {
 	RegisterStreamCallback(stream string, callback func(map[string]interface{}))
-	GetStreamCallback(stream string) func(map[string]interface{})
+	GetStreamCallback(stream string) []func(map[string]interface{})
 	//call when market connected
 	OnConnect()
 	OnAccount(message map[string]interface{})
@@ -49,7 +49,7 @@ type Base struct {
 	StopProfit decimal.Decimal
 	//当前最新价
 	LatestPrice decimal.Decimal
-	callback    map[string]func(map[string]interface{})
+	callback    map[string][]func(map[string]interface{})
 }
 
 func NewStrategy(baseAsset string, quoteAsset string, exchange exchange.IExchange, streams []string, fundRatio decimal.Decimal, stopLoss decimal.Decimal, stopProfit decimal.Decimal) Base {
@@ -61,7 +61,7 @@ func NewStrategy(baseAsset string, quoteAsset string, exchange exchange.IExchang
 		FundRatio:  fundRatio,
 		StopLoss:   stopLoss,
 		StopProfit: stopProfit,
-		callback:   make(map[string]func(map[string]interface{})),
+		callback:   make(map[string][]func(map[string]interface{})),
 	}
 	return s
 }
@@ -83,11 +83,11 @@ func (strategy *Base) GetAvailableFunds() decimal.Decimal {
 
 //监听stream
 func (strategy *Base) RegisterStreamCallback(stream string, callback func(map[string]interface{})) {
-	strategy.callback[stream] = callback
+	strategy.callback[stream] = append(strategy.callback[stream], callback)
 }
 
 //获取stream回调
-func (strategy *Base) GetStreamCallback(stream string) func(map[string]interface{}) {
+func (strategy *Base) GetStreamCallback(stream string) []func(map[string]interface{}) {
 	return strategy.callback[stream]
 }
 
