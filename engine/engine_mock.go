@@ -28,8 +28,10 @@ func (e *Mock) SubscribeMarketData(strategy strategy.IStrategy) error {
 	streams := strategy.GetStreams()
 	err := e.Exchange.SubscribeMarketData(streams, func(message map[string]interface{}) {
 		stream := message["stream"].(string)
-		callback := strategy.GetStreamCallback(strings.ToLower(stream))
-		callback(message["data"].(map[string]interface{}))
+		callbacks := strategy.GetStreamCallback(strings.ToLower(stream))
+		for _, callback := range callbacks {
+			callback(message["data"].(map[string]interface{}))
+		}
 	})
 	if err != nil {
 		e.GetLogger().WithField("err", err).WithField("streams", streams).Error("Failed to subscribe market data")

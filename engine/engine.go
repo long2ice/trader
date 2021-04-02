@@ -36,8 +36,10 @@ func (e *Engine) SubscribeMarketData(strategy strategy.IStrategy) error {
 	err := e.Exchange.SubscribeMarketData(streams, func(message map[string]interface{}) {
 		if stream, ok := message["stream"]; ok {
 			stream_ := stream.(string)
-			callback := strategy.GetStreamCallback(stream_)
-			callback(message["data"].(map[string]interface{}))
+			callbacks := strategy.GetStreamCallback(stream_)
+			for _, callback := range callbacks {
+				callback(message["data"].(map[string]interface{}))
+			}
 		}
 	})
 	if err != nil {
