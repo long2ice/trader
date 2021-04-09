@@ -14,6 +14,7 @@ type Order struct {
 	Price       decimal.Decimal
 	Amount      decimal.Decimal
 	Symbol      string
+	TimeInForce string
 	Type        PriceType `gorm:"type:enum('LIMIT', 'MARKET');"`
 	Timestamp   time.Time
 	Strategy    string

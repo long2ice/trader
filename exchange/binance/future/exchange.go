@@ -180,12 +180,13 @@ func (future *Future) AddOrder(order db.Order) (map[string]interface{}, error) {
 	}
 	service := CreateOrderService{
 		binance.CreateOrderService{
-			Symbol:   order.Symbol,
-			Side:     order.Side,
-			Type:     order.Type,
-			Price:    &order.Price,
-			Quantity: &order.Vol,
-			Api:      &future.Api,
+			Symbol:      order.Symbol,
+			Side:        order.Side,
+			Type:        order.Type,
+			Price:       &order.Price,
+			Quantity:    &order.Vol,
+			TimeInForce: &order.TimeInForce,
+			Api:         &future.Api,
 		},
 		positionSide,
 	}
