@@ -13,7 +13,6 @@ type Mock struct {
 }
 
 func (e *Mock) Start(block bool) {
-	db.Init()
 	for _, s := range e.Strategies {
 		db.Client.Where("strategy = ?", utils.GetTypeName(s)).Where("symbol = ?", s.GetSymbol()).Unscoped().Delete(&db.Order{})
 		s.OnConnect()

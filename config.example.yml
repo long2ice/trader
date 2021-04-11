@@ -2,8 +2,6 @@ debug: true
 binance:
   api_key: xxx
   api_secret: xxx
-database:
-  dsn: root:123456@tcp(127.0.0.1:3306)/trader?charset=utf8mb4&parseTime=True
 server:
   host: 0.0.0.0
   port: 8080

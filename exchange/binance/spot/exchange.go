@@ -62,7 +62,6 @@ func (s *Spot) NewExchange(apiKey string, apiSecret string) exchange.IExchange {
 			RestyClient: resty.New().SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true}).SetHeader("X-MBX-APIKEY", apiKey),
 		}},
 	}
-	b.RefreshAccount()
 	var iExchange exchange.IExchange
 	iExchange = b
 	return iExchange

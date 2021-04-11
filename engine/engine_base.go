@@ -1,14 +1,19 @@
 package engine
 
 import (
+	"github.com/long2ice/trader/conf"
+	"github.com/long2ice/trader/db"
 	"github.com/long2ice/trader/exchange"
 	"github.com/long2ice/trader/strategy"
 	"github.com/long2ice/trader/utils"
 	log "github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
 type IEngine interface {
 	Start(block bool)
+	InitConfig(config string)
+	SetDb(client *gorm.DB)
 	RegisterStrategy(strategy strategy.IStrategy)
 	SubscribeMarketData(strategy strategy.IStrategy) error
 	SubscribeAccount()
@@ -30,6 +35,12 @@ func (e *Base) GetLogger() *log.Entry {
 
 var engines = make(map[exchange.Type]*IEngine)
 
+func (e *Base) InitConfig(config string) {
+	conf.InitConfig(config)
+}
+func (e *Base) SetDb(client *gorm.DB) {
+	db.Init(client)
+}
 func (e *Base) RegisterStrategy(s strategy.IStrategy) {
 	e.Strategies = append(e.Strategies, s)
 	e.GetLogger().WithField("symbol", s.GetSymbol()).WithField("strategy", utils.GetTypeName(s)).Info("Register strategy success")

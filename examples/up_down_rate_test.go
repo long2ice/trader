@@ -7,14 +7,17 @@ import (
 	"github.com/long2ice/trader/exchange/mock"
 	"github.com/long2ice/trader/strategy"
 	"github.com/shopspring/decimal"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 	"strings"
 	"testing"
 	"time"
 )
 
 func TestUpDownRate(t *testing.T) {
-	conf.InitConfig("config.yml")
 	eng := (*engine.GetEngine(exchange.Mock, conf.BinanceApiKey, conf.BinanceApiSecret)).(*engine.Mock)
+	client, _ := gorm.Open(mysql.Open("mysql://"), &gorm.Config{})
+	eng.Init("config.yml", client)
 	BaseAsset := "ETH"
 	QuoteAsset := "USDT"
 	symbol := BaseAsset + QuoteAsset

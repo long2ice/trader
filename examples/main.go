@@ -7,11 +7,14 @@ import (
 	"github.com/long2ice/trader/server"
 	"github.com/long2ice/trader/strategy"
 	"github.com/shopspring/decimal"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 func main() {
-	conf.InitConfig("config.yml")
 	eng := (*engine.GetEngine(exchange.BinanceSpot, conf.BinanceApiKey, conf.BinanceApiSecret)).(*engine.Engine)
+	client, _ := gorm.Open(mysql.Open("mysql://"), &gorm.Config{})
+	eng.Init("config.yml", client)
 	s := &UpDownRate{
 		KLineLimit: 10,
 		Rate:       decimal.NewFromInt(6).Div(decimal.NewFromInt(4)),

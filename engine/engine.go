@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"github.com/long2ice/trader/db"
 	_ "github.com/long2ice/trader/exchange/binance/future"
 	_ "github.com/long2ice/trader/exchange/binance/spot"
 	"github.com/long2ice/trader/strategy"
@@ -14,7 +13,6 @@ type Engine struct {
 }
 
 func (e *Engine) Start(block bool) {
-	db.Init()
 	e.SubscribeAccount()
 	for _, s := range e.Strategies {
 		//订阅行情

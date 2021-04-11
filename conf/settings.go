@@ -10,7 +10,6 @@ var (
 	BinanceApiSecret string
 	ServerHost       string
 	ServerPort       string
-	DatabaseDsn      string
 	Debug            bool
 )
 
@@ -21,7 +20,6 @@ func InitConfig(configFile string) {
 	}
 	BinanceApiKey = viper.GetString("binance.api_key")
 	BinanceApiSecret = viper.GetString("binance.api_secret")
-	DatabaseDsn = viper.GetString("database.dsn")
 	ServerHost = viper.GetString("server.host")
 	ServerPort = viper.GetString("server.port")
 	Debug = viper.GetBool("Debug")
