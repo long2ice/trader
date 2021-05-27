@@ -14,7 +14,8 @@ import (
 func main() {
 	eng := (*engine.GetEngine(exchange.BinanceSpot, conf.BinanceApiKey, conf.BinanceApiSecret)).(*engine.Engine)
 	client, _ := gorm.Open(mysql.Open("mysql://"), &gorm.Config{})
-	eng.Init("config.yml", client)
+	eng.InitConfig("config.yml")
+	eng.SetDb(client)
 	s := &UpDownRate{
 		KLineLimit: 10,
 		Rate:       decimal.NewFromInt(6).Div(decimal.NewFromInt(4)),

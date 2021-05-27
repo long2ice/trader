@@ -21,7 +21,13 @@ type KLine struct {
 	CloseTime time.Time
 }
 type Ticker struct {
-	LatestPrice decimal.Decimal
-	Volume      decimal.Decimal
-	Amount      decimal.Decimal
+	EventType    string
+	Time         time.Time
+	Symbol       string
+	LatestPrice  decimal.Decimal
+	First24Price decimal.Decimal
+	High24Price  decimal.Decimal
+	Low24Price   decimal.Decimal
+	Volume       decimal.Decimal
+	Amount       decimal.Decimal
 }

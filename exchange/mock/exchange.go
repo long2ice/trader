@@ -3,6 +3,7 @@ package mock
 import (
 	"github.com/long2ice/trader/db"
 	"github.com/long2ice/trader/exchange"
+	"github.com/long2ice/trader/utils"
 	"github.com/shopspring/decimal"
 	"strings"
 	"time"
@@ -19,16 +20,31 @@ func init() {
 	exchange.RegisterExchange(exchange.Mock, &Mock{})
 }
 func (mock *Mock) ParseTicker(data map[string]interface{}) exchange.Ticker {
+	e_, _ := data["e"]
+	E, _ := data["E"]
+	s, _ := data["s"]
+	o, _ := data["o"]
+	h, _ := data["h"]
+	l, _ := data["l"]
 	c, _ := data["c"]
 	v, _ := data["v"]
 	q, _ := data["q"]
 	tc, _ := decimal.NewFromString(c.(string))
 	tv, _ := decimal.NewFromString(v.(string))
 	tq, _ := decimal.NewFromString(q.(string))
+	to, _ := decimal.NewFromString(o.(string))
+	th, _ := decimal.NewFromString(h.(string))
+	tl, _ := decimal.NewFromString(l.(string))
 	return exchange.Ticker{
-		LatestPrice: tc,
-		Volume:      tv,
-		Amount:      tq,
+		EventType:    e_.(string),
+		Time:         utils.TsToTime(E.(float64)),
+		Symbol:       s.(string),
+		LatestPrice:  tc,
+		First24Price: to,
+		High24Price:  th,
+		Low24Price:   tl,
+		Volume:       tv,
+		Amount:       tq,
 	}
 }
 

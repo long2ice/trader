@@ -3,6 +3,7 @@ package utils
 import (
 	"reflect"
 	"strconv"
+	"time"
 )
 
 func Contains(s []string, e string) bool {
@@ -23,4 +24,7 @@ func GetTypeName(v interface{}) string {
 }
 func FloatToString(num float64) string {
 	return strconv.FormatFloat(num, 'f', 0, 64)
+}
+func TsToTime(ts float64) time.Time {
+	return time.Unix(int64(ts/1000), 0)
 }
