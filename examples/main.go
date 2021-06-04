@@ -12,9 +12,9 @@ import (
 )
 
 func main() {
+	conf.InitConfig("config.yml")
 	eng := (*engine.GetEngine(exchange.BinanceSpot, conf.BinanceApiKey, conf.BinanceApiSecret)).(*engine.Engine)
-	client, _ := gorm.Open(mysql.Open("mysql://"), &gorm.Config{})
-	eng.InitConfig("config.yml")
+	client, _ := gorm.Open(mysql.Open("root:123456@tcp(127.0.0.1:3306)/itrader?charset=utf8mb4&parseTime=True"), &gorm.Config{})
 	eng.SetDb(client)
 	s := &UpDownRate{
 		KLineLimit: 10,

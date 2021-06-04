@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"github.com/long2ice/trader/conf"
 	"github.com/long2ice/trader/db"
 	"github.com/long2ice/trader/exchange"
 	"github.com/long2ice/trader/strategy"
@@ -12,7 +11,6 @@ import (
 
 type IEngine interface {
 	Start(block bool)
-	InitConfig(config string)
 	SetDb(client *gorm.DB)
 	RegisterStrategy(strategy strategy.IStrategy)
 	SubscribeMarketData(strategy strategy.IStrategy) error
@@ -35,9 +33,6 @@ func (e *Base) GetLogger() *log.Entry {
 
 var engines = make(map[exchange.Type]*IEngine)
 
-func (e *Base) InitConfig(config string) {
-	conf.InitConfig(config)
-}
 func (e *Base) SetDb(client *gorm.DB) {
 	db.Init(client)
 }
